@@ -44,3 +44,5 @@ dependencies {
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     testImplementation "com.jayway.jsonpath:json-path:2.4.0"
 }
+
+task stage(dependsOn: installDist)

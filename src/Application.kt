@@ -1,6 +1,8 @@
 package arsh.dzdback
 
 import com.example.exception.ConfigurationException
+import com.example.exception.InvalidPasswordException
+import com.example.exception.UserNameExistException
 import com.example.model.Idea
 import com.example.repository.AuthorsRepository
 import com.example.repository.AuthorsRepositoryInMemory
@@ -16,6 +18,8 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
 import io.ktor.gson.*
+import io.ktor.http.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.generic.bind
@@ -38,6 +42,32 @@ fun Application.module(testing: Boolean = false) {
             serializeNulls()
         }
 
+    }
+    install(StatusPages) {
+        exception<NotImplementedError> { e ->
+            call.respond(HttpStatusCode.NotImplemented)
+            //throw e
+        }
+        exception<NotFoundException> { e ->
+            call.respond(HttpStatusCode.NotFound)
+            throw e
+        }
+        exception<ParameterConversionException> { e ->
+            call.respond(HttpStatusCode.BadRequest)
+             throw e
+        }
+        exception<InvalidPasswordException> { e ->
+            call.respond(HttpStatusCode.BadRequest, "ƒоступ запрещен: неверный пароль")
+            throw e
+        }
+        exception<UserNameExistException> { e ->
+            call.respond(HttpStatusCode.BadRequest, "ѕользователь с таким именем уже зарегистрирован")
+            throw e
+        }
+        exception<Throwable> { e ->
+            call.respond(HttpStatusCode.InternalServerError)
+            //throw e
+        }
     }
     install(KodeinFeature) {
         constant(tag = "upload-dir") with (environment.config.propertyOrNull("arsh.upload.dir")?.getString()
