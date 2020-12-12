@@ -1,1 +1,1 @@
-web: ./build/dazibao-backend/backend/bin/backend
+web: ./build/install/backend/bin/backend

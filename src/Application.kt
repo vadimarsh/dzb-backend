@@ -50,19 +50,19 @@ fun Application.module(testing: Boolean = false) {
         }
         exception<NotFoundException> { e ->
             call.respond(HttpStatusCode.NotFound)
-            throw e
+            //throw e
         }
         exception<ParameterConversionException> { e ->
             call.respond(HttpStatusCode.BadRequest)
-             throw e
+            // throw e
         }
         exception<InvalidPasswordException> { e ->
             call.respond(HttpStatusCode.BadRequest, "ƒоступ запрещен: неверный пароль")
-            throw e
+            //throw e
         }
         exception<UserNameExistException> { e ->
             call.respond(HttpStatusCode.BadRequest, "ѕользователь с таким именем уже зарегистрирован")
-            throw e
+            //throw e
         }
         exception<Throwable> { e ->
             call.respond(HttpStatusCode.InternalServerError)
