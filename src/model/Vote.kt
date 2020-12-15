@@ -1,8 +1,6 @@
 package arsh.dzdback.model
 
-import com.example.model.Author
-
-data class Vote(val date:Long, val type: VoteType)
+data class Vote(val type: VoteType, val date:Int = (System.currentTimeMillis() / 1000).toInt())
 
 enum class VoteType{
     LIKE,DISLIKE

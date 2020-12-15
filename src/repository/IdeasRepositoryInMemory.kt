@@ -64,7 +64,7 @@ class IdeasRepositoryInMemory() : IdeasRepository {
                     //    idea.votes[myId]!!.type == VoteType.LIKE
 
                      if (!item.votes.contains(authorId)) {
-                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(System.currentTimeMillis(),VoteType.LIKE)) })
+                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(VoteType.LIKE)) })
                         items[index] = copy
                     } else {
                         copy = item
@@ -83,7 +83,7 @@ class IdeasRepositoryInMemory() : IdeasRepository {
                     val item = items[index]
                     val copy: Idea?
                     if (item.votes.contains(authorId)) {
-                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(System.currentTimeMillis(),VoteType.DISLIKE)) })
+                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(VoteType.DISLIKE)) })
                         items[index] = copy
                     } else {
                         copy = item

@@ -7,9 +7,9 @@ import com.example.model.Idea
 
 data class IdeaResponseDto(
         val id: Long,
-        val source: IdeaResponseDto? = null,
         val authorName: String,
         val authorId: Long,
+        val avatar: MediaResponseDto?,
         val created: Int,
         val content: String? = null,
         val likes: Int,
@@ -24,6 +24,7 @@ data class IdeaResponseDto(
                 id = model.id,
                 authorId = owner.id,
                 authorName = owner.username,
+                avatar = owner.avatar,
                 content = model.content,
                 created = model.created,
                 likes = model.votes.count {entry: Map.Entry<Long, Vote> ->  entry.value.type==VoteType.LIKE},

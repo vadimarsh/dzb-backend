@@ -57,11 +57,11 @@ fun Application.module(testing: Boolean = false) {
             // throw e
         }
         exception<InvalidPasswordException> { e ->
-            call.respond(HttpStatusCode.BadRequest, "Доступ запрещен: неверный пароль")
+            call.respond(HttpStatusCode.BadRequest, "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ")
             //throw e
         }
         exception<UserNameExistException> { e ->
-            call.respond(HttpStatusCode.BadRequest, "Пользователь с таким именем уже зарегистрирован")
+            call.respond(HttpStatusCode.BadRequest, "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")
             //throw e
         }
         exception<Throwable> { e ->
@@ -83,14 +83,14 @@ fun Application.module(testing: Boolean = false) {
                     save(
                         Idea(
                             id = -1,
-                            content = "Первый пост!! Привет мир!",
+                            content = "РџСЂРёРІРµС‚ РјРёСЂ!",
                             authorId = 1
                         )
                     )
                     save(
                         Idea(
                             id = -1,
-                            content = "На острове Ольхон, который является сакральным центром силы Байкала, расположен мыс Шаманка, который является обиталещем главного бурхана всей территории",
+                            content = "Р­С‚Рѕ РїСЂРѕСЃС‚Р°СЏ Рё РЅРµР·Р°РјС‹СЃР»РѕРІР°С‚Р°СЏ РёРґРµСЏ",
                             authorId = 1
                         )
                     )
@@ -111,7 +111,7 @@ fun Application.module(testing: Boolean = false) {
                     save(
                         Idea(
                             id = -1,
-                            content = "Кажется я подхватил эту заразу",
+                            content = "Р­С‚Рѕ СЃС‚Р°СЂР°СЏ Рё РїР»РѕС…Р°СЏ РёРґРµСЏ",
                             authorId = 1
                         )
                     )
