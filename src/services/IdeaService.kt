@@ -41,9 +41,9 @@ class IdeaService(private val repo: IdeasRepository, private val userService: Us
                 id = input.id,
                 authorId = myId,
                 content = input.content,
-                link = input.link,
-                attachment = input.attachmentId?.let {
-                    Media(input.attachmentId, mediaType = MediaType.IMAGE)
+                link = input.attachmentLink,
+                attachment = input.attachmentImage?.let {
+                    Media(input.attachmentImage, mediaType = MediaType.IMAGE)
                 })
         if (input.id != -1L) {
             val existing = repo.getById(input.id)!!
