@@ -219,7 +219,72 @@ class ApplicationTest {
             }
         }
     }
+    @org.junit.Test
+    fun testGetMyPosts() {
+        withTestApplication(configure) {
+            runBlocking {
+                var token: String? = null
+                with(handleRequest(HttpMethod.Post, "/api/v1/authentication") {
+                    addHeader(HttpHeaders.ContentType, jsonContentType.toString())
+                    setBody(
+                            """
+                         {
+                             "username": "Vadim",
+                             "password": "qwerty123456"
+                         }
+                     """.trimIndent()
+                    )
+                }) {
+                    println(response.content)
+                    response
+                    assertEquals(HttpStatusCode.OK, response.status())
+                    token = JsonPath.read<String>(response.content!!, "$.token")
+                }
+                delay(5000)
+                with(handleRequest(HttpMethod.Get, "/api/v1/posts/my") {
+                    addHeader(HttpHeaders.Authorization, "Bearer $token")
+                }) {
 
+                    response
+                    print(response.content)
+                    assertEquals(HttpStatusCode.OK, response.status())
+                }
+            }
+        }
+    }
+    @org.junit.Test
+    fun testGetVotesForPost() {
+        withTestApplication(configure) {
+            runBlocking {
+                var token: String? = null
+                with(handleRequest(HttpMethod.Post, "/api/v1/authentication") {
+                    addHeader(HttpHeaders.ContentType, jsonContentType.toString())
+                    setBody(
+                            """
+                         {
+                             "username": "Vadim",
+                             "password": "qwerty123456"
+                         }
+                     """.trimIndent()
+                    )
+                }) {
+                    println(response.content)
+                    response
+                    assertEquals(HttpStatusCode.OK, response.status())
+                    token = JsonPath.read<String>(response.content!!, "$.token")
+                }
+                delay(5000)
+                with(handleRequest(HttpMethod.Get, "/api/v1/posts/1/votes") {
+                    addHeader(HttpHeaders.Authorization, "Bearer $token")
+                }) {
+
+                    response
+                    print(response.content)
+                    assertEquals(HttpStatusCode.OK, response.status())
+                }
+            }
+        }
+    }
     @org.junit.Test
     fun testPosting() {
         withTestApplication(configure) {
@@ -299,11 +364,10 @@ class ApplicationTest {
                     addHeader(HttpHeaders.Authorization, "Bearer $token")
 
                 }) {
-
                     response
                     assertEquals(HttpStatusCode.OK, response.status())
                     val test = JsonPath.read<String>(response.content!!, "$.content")
-                    assertEquals("Первый пост!! Привет мир!", test)
+                    assertEquals("Привет мир!", test)
                     print(response.content)
                 }
             }
@@ -340,7 +404,7 @@ class ApplicationTest {
                     response
                     assertEquals(HttpStatusCode.OK, response.status())
                     val test = JsonPath.read<String>(response.content!!, "$.content")
-                    assertEquals("Первый пост!! Привет мир!", test)
+                    assertEquals("Привет мир!", test)
                     print(response.content)
                 }
             }

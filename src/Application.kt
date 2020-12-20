@@ -1,9 +1,14 @@
 package arsh.dzdback
 
+import arsh.dzdback.model.Vote
+import arsh.dzdback.model.VoteType
+import arsh.dzdback.model.VoteType.LIKE
 import com.example.exception.ConfigurationException
 import com.example.exception.InvalidPasswordException
 import com.example.exception.UserNameExistException
 import com.example.model.Idea
+import com.example.model.Media
+import com.example.model.MediaType
 import com.example.repository.AuthorsRepository
 import com.example.repository.AuthorsRepositoryInMemory
 import com.example.repository.IdeasRepository
@@ -30,6 +35,8 @@ import org.kodein.di.ktor.KodeinFeature
 import org.kodein.di.ktor.kodein
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -57,11 +64,11 @@ fun Application.module(testing: Boolean = false) {
             // throw e
         }
         exception<InvalidPasswordException> { e ->
-            call.respond(HttpStatusCode.BadRequest, "������ ��������: �������� ������")
+            call.respond(HttpStatusCode.BadRequest, "Неверный пароль")
             //throw e
         }
         exception<UserNameExistException> { e ->
-            call.respond(HttpStatusCode.BadRequest, "������������ � ����� ������ ��� ���������������")
+            call.respond(HttpStatusCode.BadRequest, "Имя пользователя уже занято")
             //throw e
         }
         exception<Throwable> { e ->
@@ -84,7 +91,9 @@ fun Application.module(testing: Boolean = false) {
                         Idea(
                             id = -1,
                             content = "Привет мир!",
-                            authorId = 1
+                            authorId = 1,
+                                votes = mutableMapOf(Pair<Long,Vote>(2L,Vote(authorId = 2L,date = LocalDateTime.now(),type = LIKE)))
+
                         )
                     )
                     save(
@@ -127,7 +136,8 @@ fun Application.module(testing: Boolean = false) {
             UserService(instance(), instance(), instance()).apply {
                 runBlocking {
                     this@apply.save("Vadim", "qwerty123456")
-                    this@apply.save("Donald", "qwerty54321")
+                    this@apply.save("Donald", "qwerty123456")
+                    this@apply.addAvatar(2L,Media("2.jpg",MediaType.IMAGE))
                 }
             }
         }

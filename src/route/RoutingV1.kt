@@ -2,6 +2,7 @@ package com.example.route
 
 import com.example.dto.*
 import com.example.model.Author
+import com.example.model.Media
 import com.example.services.FileService
 import com.example.services.IdeaService
 import com.example.services.UserService
@@ -45,16 +46,29 @@ class RoutingV1(
 
                 authenticate {
                     route("/me") {
+
                         get {
                             val me = call.authentication.principal<Author>()
                             call.respond(UserResponseDto.fromModel(me!!))
                         }
+                        post("/avatar"){
+                            val me = call.authentication.principal<Author>()
+                            val avatar = call.receive<Media>()
+                            userService.addAvatar(me!!.id, avatar)
+                            call.respond(HttpStatusCode.OK)
+                        }
                     }
 
                     route("/posts") {
+
                         get {
                             val me = call.authentication.principal<Author>()!!
                             val response = ideaService.getAll(myId = me.id)
+                            call.respond(response)
+                        }
+                        get("/my") {
+                            val me = call.authentication.principal<Author>()!!
+                            val response = ideaService.getByAuthorId(me.id)
                             call.respond(response)
                         }
                         get("/recent") {
@@ -88,6 +102,16 @@ class RoutingV1(
                             val me = call.authentication.principal<Author>()!!
                             val response = ideaService.getById(id, me.id)
                             call.respond(response)
+                        }
+                        get("/{id}/votes"){
+                            val postId = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
+                                    "id",
+                                    "Long"
+                            )
+                            val me = call.authentication.principal<Author>()!!
+                            val response = userService.getVotesByIdeaId(postId, me.id, ideaService)
+                            call.respond(response)
+
                         }
                         post {
 

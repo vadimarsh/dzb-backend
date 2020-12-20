@@ -12,29 +12,31 @@ import io.ktor.features.*
 
 class IdeaService(private val repo: IdeasRepository, private val userService: UserService, private val resultSize: Int) {
     suspend fun getAll(myId: Long): List<IdeaResponseDto> {
-        return combinePostsDto(repo.getAll(), myId)
+        return combineIdeasDto(repo.getAll(), myId)
     }
 
     suspend fun getRecent(myId: Long): List<IdeaResponseDto> {
         val posts = repo.getAll().take(resultSize)
-        return combinePostsDto(posts, myId)
+        return combineIdeasDto(posts, myId)
     }
 
     suspend fun getBefore(id: Long, myId: Long): List<IdeaResponseDto> {
         val posts = repo.getAll().asSequence().filter { it.id < id }.take(resultSize).toList()
-        return combinePostsDto(posts, myId)
+        return combineIdeasDto(posts, myId)
     }
 
     suspend fun getAfter(id: Long, myId: Long): List<IdeaResponseDto> {
         val posts = repo.getAll().asSequence().filter { it.id > id }.take(resultSize).toList()
-        return combinePostsDto(posts, myId)
+        return combineIdeasDto(posts, myId)
     }
 
-    suspend fun getById(id: Long, myId: Long): IdeaResponseDto {
-        val model = repo.getById(id) ?: throw NotFoundException()
-        return combineIdeaDto(model, myId)
+    suspend fun getById(id: Long, myId: Long): Idea {
+        return repo.getById(id) ?: throw NotFoundException()
     }
-
+    suspend fun getByAuthorId(myId: Long): List<IdeaResponseDto> {
+        val model = repo.getByAuthorId(myId) ?: throw NotFoundException()
+        return combineIdeasDto(model, myId)
+    }
     suspend fun save(input: IdeaRequestDto, myId: Long): IdeaResponseDto {
 
         val model = Idea(
@@ -66,12 +68,15 @@ class IdeaService(private val repo: IdeasRepository, private val userService: Us
     }
 
     suspend fun like(id: Long, myId: Long): IdeaResponseDto {
+        val me = userService.getById(myId)
         return combineIdeaDto(repo.likeById(id, myId), myId)
     }
 
     suspend fun dislike(id: Long, myId: Long): IdeaResponseDto {
         return combineIdeaDto(repo.dislikeById(id, myId), myId)
     }
+
+
 
     private fun mapToIdeaDto(
         idea: Idea,
@@ -103,7 +108,7 @@ class IdeaService(private val repo: IdeasRepository, private val userService: Us
         return postDto
     }
 
-    private suspend fun combinePostsDto(
+    private suspend fun combineIdeasDto(
         ideas: List<Idea>,
         myId: Long
     ): List<IdeaResponseDto> {

@@ -1,10 +1,12 @@
 package com.example.services
 
+import arsh.dzdback.dto.VoteResponseDto
 import com.example.dto.*
 import com.example.exception.InvalidPasswordException
 import com.example.exception.PasswordChangeException
 import com.example.exception.UserNameExistException
 import com.example.model.Author
+import com.example.model.Media
 import com.example.repository.AuthorsRepository
 import io.ktor.features.*
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -46,7 +48,10 @@ class UserService(
         val token = tokenService.generate(model.id)
         return AuthenticationResponseDto(token)
     }
-
+    suspend fun addAvatar(userId: Long, media: Media) {
+        val user = repo.getById(userId) ?: throw NotFoundException()
+        repo.setAvatar(user, media)
+    }
     suspend fun save(username: String, password: String): RegisterResponseDto {
         if (repo.getByUsername(username) != null) {
             throw UserNameExistException("Пользователь с таким именем уже есть")
@@ -55,4 +60,9 @@ class UserService(
         val token = tokenService.generate(newAuthor.id)
         return RegisterResponseDto(token)
     }
+    suspend fun getVotesByIdeaId(postId: Long, me: Long, ideaService: IdeaService): List<VoteResponseDto>{
+        val idea = ideaService.getById(postId,me)
+        return repo.getVotes(idea).map { VoteResponseDto.fromModel(it, this, repo.getById(it.authorId)!!) }
+    }
+
 }

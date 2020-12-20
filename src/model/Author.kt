@@ -6,5 +6,5 @@ data class Author(
         val id: Long = 0,
         val username: String,
         val password: String,
-        val avatar: Media? = null
+        val avatar: Media = Media("1.jpg",MediaType.IMAGE)
 ) : Principal

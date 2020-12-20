@@ -10,4 +10,6 @@ interface IdeasRepository {
     suspend fun removeById(id: Long)
     suspend fun likeById(id: Long, authorId: Long): Idea
     suspend fun dislikeById(id: Long, authorId: Long): Idea
+    suspend fun getByAuthorId(idAuthor: Long):List<Idea>
+
 }

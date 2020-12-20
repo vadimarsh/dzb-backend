@@ -7,6 +7,7 @@ import io.ktor.features.*
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.time.LocalDateTime
 
 class IdeasRepositoryInMemory() : IdeasRepository {
     private var nextId = 1L
@@ -63,8 +64,8 @@ class IdeasRepositoryInMemory() : IdeasRepository {
                     val copy: Idea?
                     //    idea.votes[myId]!!.type == VoteType.LIKE
 
-                     if (!item.votes.contains(authorId)) {
-                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(VoteType.LIKE)) })
+                    if (!item.votes.contains(authorId)) {
+                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(authorId = authorId,type = VoteType.LIKE,date = LocalDateTime.now())) })
                         items[index] = copy
                     } else {
                         copy = item
@@ -83,7 +84,7 @@ class IdeasRepositoryInMemory() : IdeasRepository {
                     val item = items[index]
                     val copy: Idea?
                     if (item.votes.contains(authorId)) {
-                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(VoteType.DISLIKE)) })
+                        copy = item.copy(votes = HashMap(item.votes).apply {  put(authorId, Vote(authorId = authorId,type = VoteType.DISLIKE,date = LocalDateTime.now())) })
                         items[index] = copy
                     } else {
                         copy = item
@@ -93,8 +94,9 @@ class IdeasRepositoryInMemory() : IdeasRepository {
             }
         }
     }
-
-
+    override suspend fun getByAuthorId(idAuthor: Long): List<Idea> =
+        items.filter { it.authorId == idAuthor }
+                .sortedWith(compareBy { it.created }).reversed()
 }
 
 

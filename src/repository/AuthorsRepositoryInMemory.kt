@@ -1,6 +1,9 @@
 package com.example.repository
 
+import arsh.dzdback.model.Vote
 import com.example.model.Author
+import com.example.model.Idea
+import com.example.model.Media
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -47,6 +50,26 @@ class AuthorsRepositoryInMemory :AuthorsRepository {
                     copy
                 }
             }
+        }
+    }
+
+    override suspend fun getVotes(idea: Idea): List<Vote> {
+            val listUsers = mutableListOf<Vote>()
+            idea.votes.forEach {
+                val user = getById(it.key)
+                if (user != null) {
+                    listUsers.add(it.value)
+                }
+            }
+            return listUsers.sortedWith(compareBy { it.date }).reversed()
+        }
+
+    override suspend fun setAvatar(author: Author, media: Media):Author {
+        val index = items.indexOfFirst { it.id == author.id }
+        return mutex.withLock {
+            val copy = items[index].copy(avatar = media)
+            items[index] = copy
+            copy
         }
     }
 }
