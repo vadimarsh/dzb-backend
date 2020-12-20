@@ -360,14 +360,14 @@ class ApplicationTest {
                 }
 
                 println("authorized")
-                with(handleRequest(HttpMethod.Post, "/api/v1/posts/like/1") {
+                with(handleRequest(HttpMethod.Post, "/api/v1/posts/like/2") {
                     addHeader(HttpHeaders.Authorization, "Bearer $token")
 
                 }) {
                     response
                     assertEquals(HttpStatusCode.OK, response.status())
                     val test = JsonPath.read<String>(response.content!!, "$.content")
-                    assertEquals("Привет мир!", test)
+                    assertEquals("Это простая и незамысловатая идея", test)
                     print(response.content)
                 }
             }

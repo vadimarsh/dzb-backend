@@ -68,7 +68,7 @@ class IdeaService(private val repo: IdeasRepository, private val userService: Us
     }
 
     suspend fun like(id: Long, myId: Long): IdeaResponseDto {
-        val me = userService.getById(myId)
+        //val me = userService.getById(myId)
         return combineIdeaDto(repo.likeById(id, myId), myId)
     }
 
@@ -103,8 +103,8 @@ class IdeaService(private val repo: IdeasRepository, private val userService: Us
         idea: Idea,
         myId: Long
     ): IdeaResponseDto {
-         val owners = userService.getByIds(listOfNotNull(idea.authorId))
-        val postDto = mapToIdeaDto(idea, owners, myId)
+         val owner = userService.getByIds(listOfNotNull(idea.authorId))
+        val postDto = mapToIdeaDto(idea, owner, myId)
         return postDto
     }
 

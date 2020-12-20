@@ -75,7 +75,6 @@ class IdeasRepositoryInMemory() : IdeasRepository {
             }
         }
     }
-
     override suspend fun dislikeById(id: Long, authorId: Long): Idea {
         mutex.withLock {
             return when (val index = items.indexOfFirst { it.id == id }) {
@@ -83,8 +82,10 @@ class IdeasRepositoryInMemory() : IdeasRepository {
                 else -> {
                     val item = items[index]
                     val copy: Idea?
-                    if (item.votes.contains(authorId)) {
-                        copy = item.copy(votes = HashMap(item.votes).apply {  put(authorId, Vote(authorId = authorId,type = VoteType.DISLIKE,date = LocalDateTime.now())) })
+                    //    idea.votes[myId]!!.type == VoteType.LIKE
+
+                    if (!item.votes.contains(authorId)) {
+                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(authorId = authorId,type = VoteType.DISLIKE,date = LocalDateTime.now())) })
                         items[index] = copy
                     } else {
                         copy = item
@@ -94,6 +95,24 @@ class IdeasRepositoryInMemory() : IdeasRepository {
             }
         }
     }
+    /*override suspend fun dislikeById(id: Long, authorId: Long): Idea {
+        mutex.withLock {
+            return when (val index = items.indexOfFirst { it.id == id }) {
+                -1 -> throw NotFoundException()
+                else -> {
+                    val item = items[index]
+                    val copy: Idea?
+                    if (item.votes.contains(authorId)) {
+                        copy = item.copy(votes = HashMap(item.votes).apply { put(authorId, Vote(authorId = authorId,type = VoteType.DISLIKE,date = LocalDateTime.now())) })
+                        items[index] = copy
+                    } else {
+                        copy = item
+                    }
+                    copy
+                }
+            }
+        }
+    }*/
     override suspend fun getByAuthorId(idAuthor: Long): List<Idea> =
         items.filter { it.authorId == idAuthor }
                 .sortedWith(compareBy { it.created }).reversed()

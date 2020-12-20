@@ -22,7 +22,7 @@ data class IdeaResponseDto(
 ) {
     companion object {
         val formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY")
-        fun fromModel(model: Idea, owner: UserResponseDto, likedByMe: Boolean = false, dislikedByMe: Boolean = false) = IdeaResponseDto(
+        fun fromModel(model: Idea, owner: UserResponseDto, likedByMe: Boolean, dislikedByMe: Boolean) = IdeaResponseDto(
                 id = model.id,
                 authorId = owner.id,
                 authorName = owner.username,
