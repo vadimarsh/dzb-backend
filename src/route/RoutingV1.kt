@@ -71,6 +71,16 @@ class RoutingV1(
                             val response = ideaService.getByAuthorId(me.id)
                             call.respond(response)
                         }
+                        get("/author/{id}") {
+                            val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
+                                    "id",
+                                    "Long"
+                            )
+                            val me = call.authentication.principal<Author>()!!
+                            val response = ideaService.getByAuthorId(id)
+                            call.respond(response)
+                        }
+
                         get("/recent") {
                             val me = call.authentication.principal<Author>()!!
                             val response = ideaService.getRecent(myId = me.id)
