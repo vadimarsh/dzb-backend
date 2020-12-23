@@ -25,7 +25,7 @@ data class IdeaResponseDto(
         fun fromModel(model: Idea, owner: UserResponseDto, likedByMe: Boolean, dislikedByMe: Boolean) = IdeaResponseDto(
                 id = model.id,
                 authorId = owner.id,
-                authorName = owner.name,
+                authorName = owner.username,
                 avatar = owner.avatar,
                 content = model.content,
                 created = model.created.format(formatter),
