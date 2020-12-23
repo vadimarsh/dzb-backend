@@ -105,7 +105,53 @@ class ApplicationTest {
             }
         }
     }
+    @org.junit.Test
+    fun changePswd() {
+        withTestApplication(configure) {
+            runBlocking {
+                var token: String? = null
+                with(handleRequest(HttpMethod.Post, "/api/v1/authentication") {
+                    addHeader(HttpHeaders.ContentType, jsonContentType.toString())
+                    setBody(
+                            """
+                        {
+                            "username": "Vadim",
+                            "password": "qwerty123456"
+                        }
+                    """.trimIndent()
+                    )
+                }) {
+                    println(response.content)
+                    response
+                    assertEquals(HttpStatusCode.OK, response.status())
+                    token = JsonPath.read<String>(response.content!!, "$.token")
+                }
+                delay(500)
+                with(handleRequest(HttpMethod.Post, "/api/v1/me/changepswd") {
+                    addHeader(HttpHeaders.Authorization, "Bearer $token")
+                    addHeader(HttpHeaders.ContentType, "application/json")
+                    setBody(
+                            """
+                        {
+                            "old": "qwerty123456",
+                            "new": "qwerty654321"
+                        }
+                        """.trimIndent()
+                    )
 
+
+                }) {
+                    response
+                    assertEquals(HttpStatusCode.OK, response.status())
+                    println(response.content)
+/*
+                    val username = JsonPath.read<String>(response.content!!, "$.username")
+                    assertEquals("Vadim", username)
+*/
+                }
+            }
+        }
+    }
     /*@org.junit.Test
     fun testBadAuth() {
         withTestApplication(configure) {

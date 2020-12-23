@@ -60,7 +60,8 @@ class RoutingV1(
                         post("/changepswd"){
                             val me = call.authentication.principal<Author>()
                             val passwordChangeRequestDto = call.receive<PasswordChangeRequestDto>()
-                        userService.changePassword(me!!.id,passwordChangeRequestDto)
+                            val changePassword = userService.changePassword(me!!.id, passwordChangeRequestDto)
+                            call.respond(changePassword)
                         }
                     }
 

@@ -30,13 +30,15 @@ class UserService(
         return repo.getByIds(ids).map { UserResponseDto.fromModel(it) }
     }
 
-    suspend fun changePassword(id: Long, input: PasswordChangeRequestDto) {
+    suspend fun changePassword(id: Long, input: PasswordChangeRequestDto): AuthenticationResponseDto  {
         val model = repo.getById(id) ?: throw NotFoundException()
         if (!passwordEncoder.matches(input.old, model.password)) {
             throw PasswordChangeException("Wrong password!")
         }
         val copy = model.copy(password = passwordEncoder.encode(input.new))
         repo.save(copy)
+        val token = tokenService.generate(model.id)
+        return AuthenticationResponseDto(token)
     }
 
     suspend fun authenticate(input: AuthenticationRequestDto): AuthenticationResponseDto {
