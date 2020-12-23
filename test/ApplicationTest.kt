@@ -82,7 +82,7 @@ class ApplicationTest {
                     setBody(
                         """
                         {
-                            "username": "Vadim",
+                            "name": "Vadim",
                             "password": "qwerty123456"
                         }
                     """.trimIndent()

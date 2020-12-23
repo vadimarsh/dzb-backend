@@ -57,6 +57,11 @@ class RoutingV1(
                             userService.addAvatar(me!!.id, avatar)
                             call.respond(HttpStatusCode.OK)
                         }
+                        post("/changepswd"){
+                            val me = call.authentication.principal<Author>()
+                            val passwordChangeRequestDto = call.receive<PasswordChangeRequestDto>()
+                        userService.changePassword(me!!.id,passwordChangeRequestDto)
+                        }
                     }
 
                     route("/posts") {
