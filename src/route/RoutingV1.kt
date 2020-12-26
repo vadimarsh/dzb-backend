@@ -1,5 +1,6 @@
 package com.example.route
 
+import arsh.dzdback.services.FCMService
 import com.example.dto.*
 import com.example.model.Author
 import com.example.model.Media
@@ -62,6 +63,12 @@ class RoutingV1(
                             val passwordChangeRequestDto = call.receive<PasswordChangeRequestDto>()
                             val changePassword = userService.changePassword(me!!.id, passwordChangeRequestDto)
                             call.respond(changePassword)
+                        }
+                        post("/fb-token"){
+                            val me = call.authentication.principal<Author>()
+                            val token = call.receive<AuthenticationResponseDto>()
+                            userService.saveFirebaseToken(me!!.id, token.token)
+                            call.respond(HttpStatusCode.OK)
                         }
                     }
 

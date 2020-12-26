@@ -72,4 +72,19 @@ class AuthorsRepositoryInMemory :AuthorsRepository {
             copy
         }
     }
+
+    override suspend fun saveFirebaseToken(id: Long, token: String): Author? {
+        return when (val index = items.indexOfFirst { it.id == id }) {
+            -1 -> {
+                null
+            }
+            else -> {
+                mutex.withLock {
+                    val copy = items[index].copy(fBtoken = token)
+                    items[index] = copy
+                    copy
+                }
+            }
+        }
+    }
 }

@@ -13,4 +13,5 @@ interface AuthorsRepository {
     suspend fun save(item: Author): Author
     suspend fun getVotes(idea: Idea): List<Vote>
     suspend fun setAvatar(user: Author, media: Media):Author
+    suspend fun saveFirebaseToken(id: Long, token: String): Author?
 }

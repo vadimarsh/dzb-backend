@@ -67,4 +67,7 @@ class UserService(
         return repo.getVotes(idea).map { VoteResponseDto.fromModel(it, this, repo.getById(it.authorId)!!) }
     }
 
+    suspend fun saveFirebaseToken(id: Long, token: String) = repo.saveFirebaseToken(id, token)
+            ?: throw NotFoundException()
+
 }
