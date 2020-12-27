@@ -1,6 +1,5 @@
 package com.example.route
 
-import arsh.dzdback.services.FCMService
 import com.example.dto.*
 import com.example.model.Author
 import com.example.model.Media
@@ -50,7 +49,7 @@ class RoutingV1(
 
                         get {
                             val me = call.authentication.principal<Author>()
-                            call.respond(UserResponseDto.fromModel(me!!))
+                            call.respond(UserResponseDto.fromModel(me!!,userService.checkReadOnly(me.id,ideaService)))
                         }
                         post("/avatar"){
                             val me = call.authentication.principal<Author>()

@@ -103,36 +103,44 @@ fun Application.module(testing: Boolean = false) {
                             id = -1,
                             content = "Привет мир!",
                             authorId = 1,
-                                votes = mutableMapOf(Pair<Long,Vote>(2L,Vote(authorId = 2L,date = LocalDateTime.now(),type = LIKE)))
+                                votes = mutableMapOf(Pair<Long,Vote>(2L,Vote(authorId = 2L,date = LocalDateTime.now(),type = LIKE))),
+                                attachment = Media("i4.jpg",MediaType.IMAGE)
+
 
                         )
                     )
                     save(
                         Idea(
                             id = -1,
-                            content = "Это простая и незамысловатая идея",
-                            authorId = 1
+                            content = "Отметить новый год на метеостанции Хамар-Дабан",
+                            authorId = 1,
+                                attachment = Media("i1.jpg",MediaType.IMAGE)
+
                         )
                     )
                     save(
                         Idea(
                             id = -1,
                             content = "Make the USA great again!",
-                            authorId = 2
+                            authorId = 2,
+
+                                attachment = Media("i3.jpg",MediaType.IMAGE)
                         )
                     )
                     save(
                         Idea(
                             id = -1,
                             content = "I will won the vote anyway",
-                            authorId = 2
+                            authorId = 2,
+                                    attachment = Media("i3.jpg",MediaType.IMAGE)
                         )
                     )
                     save(
                         Idea(
                             id = -1,
-                            content = "Это старая и плохая идея",
-                            authorId = 1
+                            content = "Купить велокресло и катать ребенка на веле",
+                            authorId = 1,
+                                    attachment = Media("i2.jpg",MediaType.IMAGE)
                         )
                     )
                 }
@@ -144,7 +152,7 @@ fun Application.module(testing: Boolean = false) {
             AuthorsRepositoryInMemory()
         }
         bind<UserService>() with eagerSingleton {
-            UserService(instance(), instance(), instance()).apply {
+            UserService(instance(), instance(), instance(),instance()).apply {
                 runBlocking {
                     this@apply.save("Vadim", "qwerty123456")
                     this@apply.save("Donald", "qwerty123456")

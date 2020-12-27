@@ -15,7 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class UserService(
         private val repo: AuthorsRepository,
         private val tokenService: JWTTokenService,
-        private val passwordEncoder: PasswordEncoder
+        private val passwordEncoder: PasswordEncoder,
+        private val ideaService: IdeaService
 ) {
     suspend fun getModelById(id: Long): Author? {
         return repo.getById(id)
@@ -23,11 +24,14 @@ class UserService(
 
     suspend fun getById(id: Long): UserResponseDto {
         val model = repo.getById(id) ?: throw NotFoundException()
-        return UserResponseDto.fromModel(model)
+        return UserResponseDto.fromModel(model,checkReadOnly(model.id,ideaService))
     }
 
+    suspend fun checkReadOnly(userId: Long, ideaService: IdeaService): Boolean {
+        return repo.checkReadOnly(userId, ideaService)
+    }
     suspend fun getByIds(ids: Collection<Long>): List<UserResponseDto> {
-        return repo.getByIds(ids).map { UserResponseDto.fromModel(it) }
+        return repo.getByIds(ids).map { UserResponseDto.fromModel(it, checkReadOnly(it.id,ideaService)) }
     }
 
     suspend fun changePassword(id: Long, input: PasswordChangeRequestDto): AuthenticationResponseDto  {

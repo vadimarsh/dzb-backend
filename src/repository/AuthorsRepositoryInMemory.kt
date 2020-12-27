@@ -4,6 +4,7 @@ import arsh.dzdback.model.Vote
 import com.example.model.Author
 import com.example.model.Idea
 import com.example.model.Media
+import com.example.services.IdeaService
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -86,5 +87,25 @@ class AuthorsRepositoryInMemory :AuthorsRepository {
                 }
             }
         }
+    }
+
+    override suspend fun checkReadOnly(userId: Long, ideaService: IdeaService): Boolean {
+        val index = items.indexOfFirst { it.id == userId }
+        val authorsIdeas = ideaService.getByAuthorId(userId)
+        authorsIdeas.forEach() {
+            if (it.dislikes >= 5 && it.likes == 0) {         // > 100
+                if (!items[index].onlyReader) {
+                    mutex.withLock {
+                        val copy = items[index].copy(onlyReader = true)
+                        items[index] = copy
+                        return items[index].onlyReader
+                    }
+                }
+
+            }
+        }
+        val copy = items[index].copy(onlyReader = false)
+        items[index] = copy
+        return items[index].onlyReader
     }
 }
