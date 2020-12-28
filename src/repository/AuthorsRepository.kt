@@ -4,7 +4,6 @@ import arsh.dzdback.model.Vote
 import com.example.model.Author
 import com.example.model.Idea
 import com.example.model.Media
-import com.example.services.IdeaService
 
 interface AuthorsRepository {
     suspend fun getAll(): List<Author>
@@ -15,5 +14,4 @@ interface AuthorsRepository {
     suspend fun getVotes(idea: Idea): List<Vote>
     suspend fun setAvatar(user: Author, media: Media):Author
     suspend fun saveFirebaseToken(id: Long, token: String): Author?
-    suspend fun checkReadOnly(userId: Long, ideaService: IdeaService): Boolean
 }
