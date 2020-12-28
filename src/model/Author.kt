@@ -7,5 +7,5 @@ data class Author(
         val username: String,
         val password: String,
         val avatar: Media = Media("1.jpg",MediaType.IMAGE),
-        val fBtoken: String? = null,
+        val fBtoken: String? = null
 ) : Principal

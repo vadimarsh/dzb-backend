@@ -78,7 +78,7 @@ class IdeaService(private val repo: IdeasRepository, private val userService: Us
             val author = userService.getById(idea.authorId)
 
             if (!author.fbToken.isNullOrEmpty()) {
-                fcmService.send(me.id, me.fbToken!!, "Ваша идея понравилась ${author.username}")
+                fcmService.send(author.id, author.fbToken, "Ваша идея понравилась ${me.username}")
             }
         }
         return combineIdeaDto(repo.likeById(id, myId), myId)
@@ -91,7 +91,7 @@ class IdeaService(private val repo: IdeasRepository, private val userService: Us
             val author = userService.getById(idea.authorId)
 
             if (!author.fbToken.isNullOrEmpty()) {
-                fcmService.send(me.id, me.fbToken!!, "Ваша идея не понравилась ${author.username}")
+                fcmService.send(author.id, author.fbToken, "Ваша идея не понравилась ${me.username}")
             }
         }
         return combineIdeaDto(repo.dislikeById(id, myId), myId)

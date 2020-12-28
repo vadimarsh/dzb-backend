@@ -50,7 +50,15 @@ class RoutingV1(
 
                         get {
                             val me = call.authentication.principal<Author>()
-                            call.respond(UserResponseDto.fromModel(me!!))
+                            val myIdeas = ideaService.getByAuthorId(me!!.id)
+                            var reader:Boolean = false
+                            myIdeas.forEach() {
+                                if (it.dislikes >= 3 && it.likes == 0) {
+                                    reader = true
+                                    return@forEach
+                                }
+                            }
+                            call.respond(UserResponseDto.fromModel(me,readerStatus = reader))
                         }
                         post("/avatar"){
                             val me = call.authentication.principal<Author>()
