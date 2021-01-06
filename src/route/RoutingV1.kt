@@ -21,7 +21,8 @@ class RoutingV1(
     private val staticPath: String,
     private val ideaService: IdeaService,
     private val fileService: FileService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val dislikeLimit: Int
 ) {
     fun setup(configuration: Routing) {
         with(configuration) {
@@ -53,7 +54,7 @@ class RoutingV1(
                             val myIdeas = ideaService.getByAuthorId(me!!.id)
                             var reader:Boolean = false
                             myIdeas.forEach() {
-                                if (it.dislikes >= 3 && it.likes == 0) {
+                                if (it.dislikes >= dislikeLimit && it.likes == 0) {
                                     reader = true
                                     return@forEach
                                 }

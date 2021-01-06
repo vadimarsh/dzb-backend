@@ -79,10 +79,10 @@ fun Application.module(testing: Boolean = false) {
     }
     install(KodeinFeature) {
         constant(tag = "upload-dir") with (environment.config.propertyOrNull("arsh.upload.dir")?.getString()
-            ?: throw ConfigurationException("Upload dir is not specified"))
+                ?: throw ConfigurationException("Upload dir is not specified"))
         constant(tag = "result-size") with (environment.config.propertyOrNull("arsh.api.result-size")?.getString()
-            ?.toInt()
-            ?: throw ConfigurationException("API result size is not specified"))
+                ?.toInt()
+                ?: throw ConfigurationException("API result size is not specified"))
         constant(tag = "fcm-password") with (environment.config.propertyOrNull("arsh.fcm.password")?.getString()
                 ?: throw ConfigurationException("FCM Password is not specified"))
         constant(tag = "fcm-salt") with (environment.config.propertyOrNull("arsh.fcm.salt")?.getString()
@@ -91,10 +91,16 @@ fun Application.module(testing: Boolean = false) {
                 ?: throw ConfigurationException("FCM DB Url is not specified"))
         constant(tag = "fcm-path") with (environment.config.propertyOrNull("arsh.fcm.path")?.getString()
                 ?: throw ConfigurationException("FCM JSON Path is not specified"))
+        constant(tag = "token-live") with (environment.config.propertyOrNull("arsh.api.token-live")?.getString()
+                ?.toInt()
+                ?: throw ConfigurationException("Token livetime is not specified"))
+        constant(tag = "dislike-limit") with (environment.config.propertyOrNull("arsh.api.dislike-limit")?.getString()
+                ?.toInt()
+                ?: throw ConfigurationException("Dislike limit is not specified"))
 
 
         bind<PasswordEncoder>() with eagerSingleton { BCryptPasswordEncoder() }
-        bind<JWTTokenService>() with eagerSingleton { JWTTokenService() }
+        bind<JWTTokenService>() with eagerSingleton { JWTTokenService(instance(tag = "token-live")) }
         bind<IdeasRepository>() with eagerSingleton {
             IdeasRepositoryInMemory().apply {
                 runBlocking {
@@ -103,8 +109,8 @@ fun Application.module(testing: Boolean = false) {
                                     id = -1,
                                     content = "Привет мир!",
                                     authorId = 1,
-                                    votes = mutableMapOf(Pair<Long,Vote>(2L,Vote(authorId = 2L,date = LocalDateTime.now(),type = LIKE))),
-                                    attachment = Media("i4.jpg",MediaType.IMAGE)
+                                    votes = mutableMapOf(Pair<Long, Vote>(2L, Vote(authorId = 2L, date = LocalDateTime.now(), type = LIKE))),
+                                    attachment = Media("i4.jpg", MediaType.IMAGE)
 
 
                             )
@@ -114,7 +120,7 @@ fun Application.module(testing: Boolean = false) {
                                     id = -1,
                                     content = "Отметить новый год на метеостанции Хамар-Дабан",
                                     authorId = 1,
-                                    attachment = Media("i1.jpg",MediaType.IMAGE)
+                                    attachment = Media("i1.jpg", MediaType.IMAGE)
 
                             )
                     )
@@ -124,7 +130,7 @@ fun Application.module(testing: Boolean = false) {
                                     content = "Make the USA great again!",
                                     authorId = 2,
 
-                                    attachment = Media("i3.jpg",MediaType.IMAGE)
+                                    attachment = Media("i3.jpg", MediaType.IMAGE)
                             )
                     )
                     save(
@@ -132,7 +138,7 @@ fun Application.module(testing: Boolean = false) {
                                     id = -1,
                                     content = "I will won the vote anyway",
                                     authorId = 2,
-                                    attachment = Media("i3.jpg",MediaType.IMAGE)
+                                    attachment = Media("i3.jpg", MediaType.IMAGE)
                             )
                     )
                     save(
@@ -140,7 +146,7 @@ fun Application.module(testing: Boolean = false) {
                                     id = -1,
                                     content = "Купить велокресло и катать ребенка на веле",
                                     authorId = 1,
-                                    attachment = Media("i2.jpg",MediaType.IMAGE)
+                                    attachment = Media("i2.jpg", MediaType.IMAGE)
                             )
                     )
                 }
@@ -158,9 +164,9 @@ fun Application.module(testing: Boolean = false) {
                     this@apply.save("Donald", "qwerty123456")
                     this@apply.save("Vladimir", "qwerty123456")
                     this@apply.save("Somebody", "qwerty123456")
-                    this@apply.addAvatar(2L,Media("2.jpg",MediaType.IMAGE))
-                    this@apply.addAvatar(3L,Media("3.jpg",MediaType.IMAGE))
-                    this@apply.addAvatar(4L,Media("4.jpg",MediaType.IMAGE))
+                    this@apply.addAvatar(2L, Media("2.jpg", MediaType.IMAGE))
+                    this@apply.addAvatar(3L, Media("3.jpg", MediaType.IMAGE))
+                    this@apply.addAvatar(4L, Media("4.jpg", MediaType.IMAGE))
                 }
             }
         }
@@ -174,30 +180,31 @@ fun Application.module(testing: Boolean = false) {
         }
         bind<RoutingV1>() with eagerSingleton {
             RoutingV1(
-                instance(tag = "upload-dir"),
-                instance(),
-                instance(),
-                instance()
+                    instance(tag = "upload-dir"),
+                    instance(),
+                    instance(),
+                    instance(),
+                    instance(tag = "dislike-limit")
             )
         }
 
     }
-        install(Authentication) {
-            jwt {
-                val jwtService by kodein().instance<JWTTokenService>()
-                verifier(jwtService.verifier)
-                val userService by kodein().instance<UserService>()
+    install(Authentication) {
+        jwt {
+            val jwtService by kodein().instance<JWTTokenService>()
+            verifier(jwtService.verifier)
+            val userService by kodein().instance<UserService>()
 
-                validate {
-                    val id = it.payload.getClaim("id").asLong()
-                    userService.getModelById(id)
-                }
+            validate {
+                val id = it.payload.getClaim("id").asLong()
+                userService.getModelById(id)
             }
         }
-
-        install(Routing) {
-            val routingV1 by kodein().instance<RoutingV1>()
-            routingV1.setup(this)
-        }
     }
+
+    install(Routing) {
+        val routingV1 by kodein().instance<RoutingV1>()
+        routingV1.setup(this)
+    }
+}
 
