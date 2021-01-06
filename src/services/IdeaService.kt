@@ -36,7 +36,7 @@ class IdeaService(private val repo: IdeasRepository, private val userService: Us
     }
 
     suspend fun getByAuthorId(myId: Long): List<IdeaResponseDto> {
-        val model = repo.getByAuthorId(myId) ?: throw NotFoundException()
+        val model = repo.getByAuthorId(myId)
         return combineIdeasDto(model, myId)
     }
 
