@@ -102,7 +102,7 @@ fun Application.module(testing: Boolean = false) {
         bind<PasswordEncoder>() with eagerSingleton { BCryptPasswordEncoder() }
         bind<JWTTokenService>() with eagerSingleton { JWTTokenService(instance(tag = "token-live")) }
         bind<IdeasRepository>() with eagerSingleton {
-            IdeasRepositoryInMemory().apply {
+            IdeasRepositoryInMemory()/*.apply {
                 runBlocking {
                     save(
                             Idea(
@@ -150,7 +150,7 @@ fun Application.module(testing: Boolean = false) {
                             )
                     )
                 }
-            }
+            }*/
         }
         bind<IdeaService>() with eagerSingleton { IdeaService(instance(), instance(), instance(), instance(tag = "result-size")) }
         bind<FileService>() with eagerSingleton { FileService(instance(tag = "upload-dir")) }
